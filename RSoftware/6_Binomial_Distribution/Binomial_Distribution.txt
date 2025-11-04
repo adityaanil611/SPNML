@@ -1,0 +1,15 @@
+# 6) Binomial distribution
+
+Cumulative probability P(X <= k):
+
+```r
+n <- 10        # number of trials (size)
+p <- 0.3       # probability of success
+k <- 4         # value for cumulative probability
+
+p_le_k <- pbinom(k, size = n, prob = p)         # P(X <= k)
+p_ge_k <- 1 - pbinom(k - 1, size = n, prob = p) # P(X >= k)
+p_le_k; p_ge_k
+```
+
+For exactly P(X = k) use: dbinom(k, size = n, prob = p).

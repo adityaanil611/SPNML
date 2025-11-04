@@ -1,0 +1,66 @@
+# Bisection Method
+
+1. Definition / Concept Overview
+   Bracketed root-finding: repeatedly halves an interval (a, b) where f(a) * f(b) < 0 until the interval is sufficiently small.
+
+2. Mathematical Formulae
+   Midpoint m = (a + b) / 2.
+   Sign test: if f(a) * f(m) < 0 then set b <- m, else set a <- m.
+   Error after k steps: |b_k - a_k| = (b_0 - a_0) / 2^k.
+
+3. Algorithm / Step-by-Step Procedure
+   (i) Choose a, b with f(a) * f(b) < 0.
+   (ii) Compute m.
+   (iii) Replace the endpoint sharing the same sign with m.
+   (iv) Stop when |b - a| < eps or |f(m)| < eps.
+
+4. Advantages
+   - Guaranteed convergence if sign change.
+   - Simple and the error bound is known a priori.
+
+5. Disadvantages / Limitations
+   - Slow linear convergence.
+   - Requires a bracketing interval with sign change.
+   - Ignores derivative information.
+
+6. Applications
+   - Safe baseline solver for engineering design equations with known brackets.
+
+7. Implementation Insight (MATLAB / R)
+   MATLAB
+   function [root, it] = bisection(f, a, b, eps, maxit)
+   if f(a) * f(b) > 0, error('No sign change'); end
+   for it = 1:maxit
+       m = (a + b) / 2; fm = f(m);
+       if abs(fm) < eps || (b - a) / 2 < eps, root = m; return; end
+       if f(a) * fm < 0, b = m; else, a = m; end
+   end
+   root = (a + b) / 2;
+   end
+
+   R
+   bisection <- function(f, a, b, eps = 1e-8, maxit = 100){
+     if(f(a) * f(b) > 0) stop('No sign change')
+     for(it in 1:maxit){
+       m <- (a + b) / 2; fm <- f(m)
+       if(abs(fm) < eps || (b - a) / 2 < eps) return(list(root = m, it = it))
+       if(f(a) * fm < 0) b <- m else a <- m
+     }
+     list(root = (a + b) / 2, it = maxit)
+   }
+
+8. Example
+   Solve x^3 - 2 = 0 on [1, 2]. After about 20 iterations the estimate is 1.2599 with |b - a| < 10^-6.
+
+9. Comparison (Root-Finding Methods)
+
+| Method | Principle | Order | Convergence | Complexity per iteration | Stability | Advantages | Disadvantages | Typical use |
+| ------ | --------- | ----- | ----------- | ------------------------ | --------- | ---------- | ------------- | ----------- |
+| Bisection | Halve bracket | 1 | Linear | 1 function evaluation | Very robust | Guaranteed if sign change, error bound | Slow, needs bracket | Safe baseline, monotonic functions |
+| Regula Falsi | Secant with bracket | About 1 | Often faster than bisection | 1 function evaluation (reuse endpoints) | Robust (bracketed) | Better steps than midpoint | Can stall (sticky endpoint) | When derivatives unavailable |
+| Newton-Raphson | Tangent iteration | 2 near root | Quadratic local convergence | Function plus derivative evaluation | Sensitive | Very fast when good initial guess and smooth f | Needs derivative, may diverge | Fast solves with derivative access |
+
+Discussion:
+- Use bisection when a guaranteed, steady convergence is required and derivative information is unavailable.
+- Prefer Regula Falsi when the function is smooth and you want faster convergence without sacrificing bracketing safety, but watch for stagnation.
+- Choose Newton-Raphson when derivatives are accessible and a high-quality initial guess is available, because its quadratic convergence dramatically cuts iterations.

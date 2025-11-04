@@ -1,0 +1,54 @@
+# Lagrange Interpolation
+
+1. Definition / Concept Overview
+	Constructs the interpolating polynomial for arbitrarily spaced nodes using Lagrange basis polynomials.
+
+2. Mathematical Formulae
+	P(x) = sum_{i = 0}^n y_i * l_i(x), where l_i(x) = product_{j != i} (x - x_j) / (x_i - x_j).
+
+3. Algorithm / Step-by-Step Procedure
+	(i) For each i, compute l_i(x).
+	(ii) Sum y_i * l_i(x) to obtain P(x).
+
+4. Advantages
+	- Works with unequal spacing of nodes.
+	- No need to build difference tables.
+
+5. Disadvantages / Limitations
+	- O(n^2) work per evaluation; numerically less stable for high degree.
+	- Must recompute if a new data point is added.
+
+6. Applications
+	- Irregular sampling, sparse nodes, one-off evaluations.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function px = lagrange_interp(x, y, xi)
+	n = length(x); px = 0;
+	for i = 1:n
+		 li = 1;
+		 for j = 1:n
+			  if j ~= i, li = li * (xi - x(j)) / (x(i) - x(j)); end
+		 end
+		 px = px + y(i) * li;
+	end
+	end
+
+	R
+	Implement with nested loops or vectorised products for each basis polynomial.
+
+8. Example
+	Interpolate at x = 1.5 using nodes {0, 1, 2} and y = {1, 2, 5}; the result is P(1.5) = 3.875.
+
+9. Comparison (Interpolation Methods)
+
+| Method | Node spacing | Core formula | Accuracy region | Cost | Pros | Cons | Use |
+| ------ | ------------ | ------------ | --------------- | ---- | ---- | ---- | --- |
+| Newton Forward | Equal spacing | Forward differences | Near start | Build table once, evaluation cheap | Reusable series, efficient | Needs equal spacing | Start-side table data |
+| Newton Backward | Equal spacing | Backward differences | Near end | Similar | Good near end | Needs equal spacing | End-side table data |
+| Lagrange | Any spacing | Basis polynomials | Global | O(n^2) per evaluation | Handles unequal spacing | Recompute when adding nodes | Irregular nodes, small n |
+
+When to prefer which?
+- Equally spaced data near the start: choose Newton Forward.
+- Equally spaced data near the end: choose Newton Backward.
+- Unequally spaced or few points: choose Lagrange.

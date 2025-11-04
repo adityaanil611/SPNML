@@ -1,0 +1,56 @@
+# Newton Forward Interpolation
+
+1. Definition / Concept Overview
+	Polynomial interpolation on equally spaced nodes using forward differences; most accurate near the beginning of the table.
+
+2. Mathematical Formulae
+	With step h and nodes x0, x1, ..., define u = (x - x0) / h.
+	P(x) = y0 + u * Delta y0 + u * (u - 1) / 2! * Delta^2 y0 + ...
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Build the forward-difference table.
+	(ii) Compute u.
+	(iii) Evaluate the series up to the desired order.
+
+4. Advantages
+	- Efficient with tabulated equally spaced data.
+	- Allows incremental polynomial construction.
+
+5. Disadvantages / Limitations
+	- Requires equal spacing of nodes.
+	- Accuracy degrades as x moves away from x0.
+
+6. Applications
+	- Thermodynamic, aerodynamic, and signal tables with uniform spacing.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function px = newton_forward(x, y, xi)
+	h = x(2) - x(1); n = length(x);
+	D = zeros(n, n); D(:,1) = y(:);
+	for j = 2:n, D(1:n-j+1, j) = diff(D(1:n-j+1, j-1)); end
+	u = (xi - x(1)) / h; px = y(1); fact = 1; uprod = 1;
+	for k = 1:n-1
+		 uprod = uprod * (u - (k - 1)); fact = fact * k;
+		 px = px + uprod * D(1, k + 1) / fact;
+	end
+	end
+
+	R
+	Implement with nested loops using diff for forward differences and series evaluation.
+
+8. Example
+	Interpolate y(x) using x = {0, 1, 2, 3}. Evaluate near x0 for best accuracy.
+
+9. Comparison (Interpolation Methods)
+
+| Method | Node spacing | Core formula | Accuracy region | Cost | Pros | Cons | Use |
+| ------ | ------------ | ------------ | --------------- | ---- | ---- | ---- | --- |
+| Newton Forward | Equal spacing | Forward differences | Near start | Build table once, evaluation cheap | Reusable series, efficient | Needs equal spacing | Start-side table data |
+| Newton Backward | Equal spacing | Backward differences | Near end | Similar | Good near end | Needs equal spacing | End-side table data |
+| Lagrange | Any spacing | Basis polynomials | Global | O(n^2) per evaluation | Handles unequal spacing | Recompute when adding nodes | Irregular nodes, small n |
+
+When to prefer which?
+- Equally spaced data near the start: choose Newton Forward.
+- Equally spaced data near the end: choose Newton Backward.
+- Unequally spaced or few points: choose Lagrange.

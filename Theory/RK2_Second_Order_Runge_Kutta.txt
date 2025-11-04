@@ -1,0 +1,41 @@
+# Second Order Runge Kutta (RK2)
+
+1. Definition / Concept Overview
+	Family of second-order Runge Kutta methods; the midpoint variant uses a slope evaluated at the midpoint of the step.
+
+2. Mathematical Formulae
+	Midpoint form: k1 = f(t_n, y_n), k2 = f(t_n + h / 2, y_n + h / 2 * k1), y_{n+1} = y_n + h * k2.
+
+3. Algorithm / Step-by-Step Procedure
+	Compute k1 at the start, evaluate k2 at the midpoint, then update y_{n+1} with k2.
+
+4. Advantages
+	- Second-order accuracy with improved stability over Euler.
+
+5. Disadvantages / Limitations
+	- Less accurate per step than RK4 for smooth problems.
+
+6. Applications
+	- Real-time simulations where moderate accuracy suffices.
+
+7. Implementation Insight (MATLAB / R)
+	Structure mirrors RK4 but with two stages instead of four.
+
+8. Example
+	For y' = -2 y this method outperforms Euler at the same step size.
+
+9. Comparison (ODE Methods)
+
+| Method | Order | Function evals per step | Stability | Pros | Cons | Typical use |
+| ------ | ----- | ----------------------- | --------- | ---- | ---- | ----------- |
+| Euler | 1 | 1 | Poor (explicit) | Simplest | Low accuracy, unstable for stiff problems | Teaching, rough preview |
+| Modified Euler (Heun) | 2 | 2 | Better than Euler | Easy, decent accuracy | Still explicit | Non-stiff with light compute |
+| RK2 (Midpoint) | 2 | 2 | Better than Euler | Good second-order accuracy | Less accurate than RK4 | Real-time or quick sims |
+| RK4 | 4 | 4 | Good for non-stiff | High accuracy vs cost | Not for stiff problems | Default non-stiff solver |
+| RK4 (systems) | 4 | 4 vector evals | Same as RK4 | Works for vector ODEs | Costly for large systems | Coupled non-stiff models |
+
+When to prefer which?
+- Highest accuracy with reasonable steps on non-stiff problems: choose RK4.
+- Moderate accuracy at lower cost: choose RK2 or Heun.
+- Educational use or very small h: Euler.
+- Stiff problems: use implicit methods (not covered here).

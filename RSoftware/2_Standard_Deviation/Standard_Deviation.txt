@@ -1,0 +1,21 @@
+# 2) Standard deviation
+
+## (a) Without frequency
+
+```r
+x <- c(10, 12, 13, 15, 20)
+sd(x)   # sample standard deviation
+```
+
+## (b) With frequency
+
+Population-style formula: sigma = sqrt(sum(f * (x - mean_w)^2) / sum(f)).
+
+```r
+x  <- c(10, 12, 13, 15, 20)   # class values
+f  <- c(2,  3,  4,  2,  1)    # frequencies
+
+mean_w <- sum(f * x) / sum(f)
+sd_freq <- sqrt(sum(f * (x - mean_w)^2) / sum(f))
+sd_freq
+```

@@ -1,0 +1,69 @@
+# Gauss Seidel Method
+
+1. Definition / Concept Overview
+	Iterative solver for A x = b that updates solution components in-place using the newest values available during each sweep.
+
+2. Mathematical Formulae
+	Split A = D + L + U, where D is diagonal, L strict lower, U strict upper. The iteration is
+	x_i^(k+1) = (1 / a_ii) * (b_i - sum_{j < i} a_ij * x_j^(k+1) - sum_{j > i} a_ij * x_j^(k)).
+	(Jacobi for context uses only x^(k) on the right-hand side.)
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Choose an initial vector x^(0).
+	(ii) For i = 1 to n, update x_i with the latest values.
+	(iii) Repeat until ||x^(k+1) - x^(k)|| < eps.
+
+4. Advantages
+	- Typically converges faster than Jacobi.
+	- Simple to implement and exploits sparsity.
+
+5. Disadvantages / Limitations
+	- Convergence requires conditions such as strict diagonal dominance or symmetric positive definiteness with proper ordering.
+	- Sequential updates limit parallelism compared to Jacobi.
+
+6. Applications
+	- Large sparse linear systems from PDE discretisation and as a smoother in multigrid.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function [x, it] = gauss_seidel(A, b, x0, eps, maxit)
+	x = x0; n = length(b);
+	for it = 1:maxit
+		 x_old = x;
+		 for i = 1:n
+			  s1 = A(i,1:i-1) * x(1:i-1);
+			  s2 = A(i,i+1:n) * x_old(i+1:n);
+			  x(i) = (b(i) - s1 - s2) / A(i,i);
+		 end
+		 if norm(x - x_old, inf) < eps, return; end
+	end
+	end
+
+	R
+	gauss_seidel <- function(A, b, x0 = NULL, eps = 1e-8, maxit = 1000){
+	  n <- length(b); if(is.null(x0)) x0 <- rep(0, n); x <- x0
+	  for(it in 1:maxit){
+		 x_old <- x
+		 for(i in 1:n){
+			s1 <- if(i > 1) sum(A[i,1:(i-1)] * x[1:(i-1)]) else 0
+			s2 <- if(i < n) sum(A[i,(i+1):n] * x_old[(i+1):n]) else 0
+			x[i] <- (b[i] - s1 - s2) / A[i,i]
+		 }
+		 if(max(abs(x - x_old)) < eps) return(list(x = x, it = it))
+	  }
+	  list(x = x, it = maxit)
+	}
+
+8. Example
+	Solve [[4 1], [2 3]] * x = [1; 2] starting from x^(0) = [0; 0]. Gauss Seidel converges in a few iterations to approximately (0.0909, 0.5455).
+
+9. Comparison (Gauss Seidel vs Jacobi)
+
+| Method | Update style | Convergence rate | Parallelism | Requirements | Pros | Cons | Use case |
+| ------ | ------------ | ---------------- | ----------- | ------------ | ---- | ---- | -------- |
+| Jacobi | Uses old iterate x^(k) only | Slower | High (fully parallel) | Often needs diagonal dominance | Simple to parallelise | More iterations | GPU or parallel contexts |
+| Gauss Seidel | In-place with newest values | Faster in practice | Low | Similar conditions, ordering matters | Fewer iterations | Less parallel friendly | CPU solves, sparse matrices |
+
+When to prefer which?
+- Parallel hardware or easy vectorisation: choose Jacobi.
+- CPU setting and you want faster convergence per sweep: choose Gauss Seidel.

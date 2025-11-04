@@ -1,0 +1,7 @@
+# 4) Correlation
+
+```r
+x <- c(1, 2, 3, 4, 5)
+y <- c(2, 4, 5, 4, 5)
+cor(x, y)   # Pearson correlation by default
+```

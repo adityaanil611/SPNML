@@ -1,0 +1,66 @@
+# Regula Falsi Method
+
+1. Definition / Concept Overview
+	Bracketed method that uses the secant line through (a, f(a)) and (b, f(b)) to estimate the root more aggressively than the midpoint.
+
+2. Mathematical Formulae
+	Intersection: c = b - f(b) * (b - a) / (f(b) - f(a)).
+	Update by sign test: replace the endpoint with the same sign as f(c).
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Start with f(a) * f(b) < 0.
+	(ii) Compute c via the false-position formula.
+	(iii) Update [a, b] using the sign change.
+	(iv) Stop when |f(c)| or the interval width is below tolerance.
+
+4. Advantages
+	- Typically faster than bisection.
+	- Still bracketed, so retains safety.
+
+5. Disadvantages / Limitations
+	- Can stall when the function is strongly skewed and one endpoint hardly moves.
+	- Convergence remains linear in the worst cases.
+
+6. Applications
+	- Useful when derivatives are unavailable but a faster bracketed method than bisection is desired.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function [root, it] = regulafalsi(f, a, b, eps, maxit)
+	if f(a) * f(b) > 0, error('No sign change'); end
+	for it = 1:maxit
+		 fa = f(a); fb = f(b);
+		 c = b - fb * (b - a) / (fb - fa); fc = f(c);
+		 if abs(fc) < eps, root = c; return; end
+		 if fa * fc < 0, b = c; else, a = c; end
+	end
+	root = c;
+	end
+
+	R
+	regulafalsi <- function(f, a, b, eps = 1e-8, maxit = 100){
+	  if(f(a) * f(b) > 0) stop('No sign change')
+	  for(it in 1:maxit){
+		 fa <- f(a); fb <- f(b)
+		 c <- b - fb * (b - a) / (fb - fa); fc <- f(c)
+		 if(abs(fc) < eps) return(list(root = c, it = it))
+		 if(fa * fc < 0) b <- c else a <- c
+	  }
+	  list(root = c, it = maxit)
+	}
+
+8. Example
+	For f(x) = x^3 - 2 on [1, 2], this method converges faster than bisection in early iterations but may slow if one endpoint sticks.
+
+9. Comparison (Root-Finding Methods)
+
+| Method | Principle | Order | Convergence | Complexity per iteration | Stability | Advantages | Disadvantages | Typical use |
+| ------ | --------- | ----- | ----------- | ------------------------ | --------- | ---------- | ------------- | ----------- |
+| Bisection | Halve bracket | 1 | Linear | 1 function evaluation | Very robust | Guaranteed if sign change, error bound | Slow, needs bracket | Safe baseline, monotonic functions |
+| Regula Falsi | Secant with bracket | About 1 | Often faster than bisection | 1 function evaluation (reuse endpoints) | Robust (bracketed) | Better steps than midpoint | Can stall (sticky endpoint) | When derivatives unavailable |
+| Newton-Raphson | Tangent iteration | 2 near root | Quadratic local convergence | Function plus derivative evaluation | Sensitive | Very fast when good initial guess and smooth f | Needs derivative, may diverge | Fast solves with derivative access |
+
+Discussion:
+- Use bisection when a guaranteed, steady convergence is required and derivative information is unavailable.
+- Prefer Regula Falsi when the function is smooth and you want faster convergence without sacrificing bracketing safety, but watch for stagnation.
+- Choose Newton-Raphson when derivatives are accessible and a high-quality initial guess is available, because its quadratic convergence dramatically cuts iterations.

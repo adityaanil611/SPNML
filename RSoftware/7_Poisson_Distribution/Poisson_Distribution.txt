@@ -1,0 +1,12 @@
+# 7) Poisson distribution
+
+Cumulative probability P(X <= k):
+
+```r
+lambda <- 3.5   # rate parameter
+k <- 2          # value for cumulative probability
+
+p_le_k <- ppois(k, lambda = lambda)          # P(X <= k)
+p_ge_k <- 1 - ppois(k - 1, lambda = lambda)  # P(X >= k)
+p_le_k; p_ge_k
+```

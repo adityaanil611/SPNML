@@ -1,0 +1,10 @@
+# 5) Regression line
+
+```r
+x <- c(1, 2, 3, 4, 5)
+y <- c(2, 4, 5, 4, 5)
+plot(x, y, main = "Simple Linear Regression")
+model <- lm(y ~ x)
+abline(model, col = "blue")
+model   # view coefficients
+```

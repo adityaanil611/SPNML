@@ -1,0 +1,54 @@
+# Euler Method
+
+1. Definition / Concept Overview
+	First-order explicit method that advances the solution using the forward tangent for y' = f(t, y).
+
+2. Mathematical Formulae
+	Step size h: y_{n+1} = y_n + h * f(t_n, y_n).
+	Local error is O(h^2); global error is O(h).
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Set initial value y0 at t0.
+	(ii) March forward with the update formula for n = 0, 1, ...
+
+4. Advantages
+	- Very simple and good for teaching or rough previews.
+
+5. Disadvantages / Limitations
+	- Low accuracy and poor stability for stiff problems.
+
+6. Applications
+	- Quick prototypes and non-stiff problems with very small h.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function [t, y] = euler(f, t0, y0, h, N)
+	t = (t0:h:t0 + N * h)'; y = zeros(N + 1, length(y0)); y(1,:) = y0;
+	for n = 1:N, y(n + 1,:) = y(n,:) + h * f(t(n), y(n,:))'; end
+	end
+
+	R
+	euler <- function(f, t0, y0, h, N){
+	  t <- seq(t0, t0 + N * h, by = h); y <- matrix(NA, nrow = N + 1, ncol = length(y0)); y[1,] <- y0
+	  for(n in 1:N) y[n + 1,] <- y[n,] + h * f(t[n], y[n,])
+	  list(t = t, y = y)
+	}
+
+8. Example
+	For y' = -2 y with y(0) = 1 and h = 0.1, Euler gives y(1) approx (1 - 0.2)^10 = 0.1073, whereas the exact value is e^-2 approx 0.1353.
+
+9. Comparison (ODE Methods)
+
+| Method | Order | Function evals per step | Stability | Pros | Cons | Typical use |
+| ------ | ----- | ----------------------- | --------- | ---- | ---- | ----------- |
+| Euler | 1 | 1 | Poor (explicit) | Simplest | Low accuracy, unstable for stiff problems | Teaching, rough preview |
+| Modified Euler (Heun) | 2 | 2 | Better than Euler | Easy, decent accuracy | Still explicit | Non-stiff with light compute |
+| RK2 (Midpoint) | 2 | 2 | Better than Euler | Good second-order accuracy | Less accurate than RK4 | Real-time or quick sims |
+| RK4 | 4 | 4 | Good for non-stiff | High accuracy vs cost | Not for stiff problems | Default non-stiff solver |
+| RK4 (systems) | 4 | 4 vector evals | Same as RK4 | Works for vector ODEs | Costly for large systems | Coupled non-stiff models |
+
+When to prefer which?
+- Highest accuracy with reasonable steps on non-stiff problems: choose RK4.
+- Moderate accuracy at lower cost: choose RK2 or Heun.
+- Educational use or very small h: Euler.
+- Stiff problems: use implicit methods (not covered here).

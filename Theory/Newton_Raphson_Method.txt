@@ -1,0 +1,66 @@
+# Newton Raphson Method
+
+1. Definition / Concept Overview
+	Open root-finding method that uses tangent lines; converges quadratically near the root when derivatives behave well.
+
+2. Mathematical Formulae
+	Iteration: x_{k+1} = x_k - f(x_k) / f'(x_k).
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Choose an initial guess x0.
+	(ii) Iterate the Newton step.
+	(iii) Stop when |x_{k+1} - x_k| < eps or |f(x_{k+1})| < eps.
+
+4. Advantages
+	- Quadratic convergence near the solution.
+	- Very few iterations when f' is available and well behaved.
+
+5. Disadvantages / Limitations
+	- Requires the derivative f'.
+	- Sensitive to the initial guess; may diverge or land on a different root.
+	- Fails when f'(x) is close to zero.
+
+6. Applications
+	- Nonlinear equation solving in engineering and optimization where derivatives can be computed.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function [x, it] = newton(f, df, x0, eps, maxit)
+	x = x0;
+	for it = 1:maxit
+		 fx = f(x); dfx = df(x);
+		 if abs(dfx) < eps, error('Derivative near zero'); end
+		 xnew = x - fx / dfx;
+		 if abs(xnew - x) < eps || abs(fx) < eps, x = xnew; return; end
+		 x = xnew;
+	end
+	end
+
+	R
+	newton <- function(f, df, x0, eps = 1e-10, maxit = 50){
+	  x <- x0
+	  for(it in 1:maxit){
+		 fx <- f(x); dfx <- df(x)
+		 if(abs(dfx) < .Machine$double.eps) stop('Derivative near zero')
+		 xnew <- x - fx / dfx
+		 if(abs(xnew - x) < eps || abs(fx) < eps) return(list(root = xnew, it = it))
+		 x <- xnew
+	  }
+	  list(root = x, it = maxit)
+	}
+
+8. Example
+	For f(x) = x^3 - 2 with f'(x) = 3 x^2 and x0 = 1, the method rapidly converges to 1.2599.
+
+9. Comparison (Root-Finding Methods)
+
+| Method | Principle | Order | Convergence | Complexity per iteration | Stability | Advantages | Disadvantages | Typical use |
+| ------ | --------- | ----- | ----------- | ------------------------ | --------- | ---------- | ------------- | ----------- |
+| Bisection | Halve bracket | 1 | Linear | 1 function evaluation | Very robust | Guaranteed if sign change, error bound | Slow, needs bracket | Safe baseline, monotonic functions |
+| Regula Falsi | Secant with bracket | About 1 | Often faster than bisection | 1 function evaluation (reuse endpoints) | Robust (bracketed) | Better steps than midpoint | Can stall (sticky endpoint) | When derivatives unavailable |
+| Newton-Raphson | Tangent iteration | 2 near root | Quadratic local convergence | Function plus derivative evaluation | Sensitive | Very fast when good initial guess and smooth f | Needs derivative, may diverge | Fast solves with derivative access |
+
+Discussion:
+- Use bisection when a guaranteed, steady convergence is required and derivative information is unavailable.
+- Prefer Regula Falsi when the function is smooth and you want faster convergence without sacrificing bracketing safety, but watch for stagnation.
+- Choose Newton-Raphson when derivatives are accessible and a high-quality initial guess is available, because its quadratic convergence dramatically cuts iterations.

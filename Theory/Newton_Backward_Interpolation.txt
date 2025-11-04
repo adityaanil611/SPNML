@@ -1,0 +1,43 @@
+# Newton Backward Interpolation
+
+1. Definition / Concept Overview
+	Uses backward differences on equally spaced nodes; most accurate near the end of the table.
+
+2. Mathematical Formulae
+	With u = (x - x_n) / h:
+	P(x) = y_n + u * Nabla y_n + u * (u + 1) / 2! * Nabla^2 y_n + ...
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Build the backward-difference table.
+	(ii) Compute u with respect to x_n.
+	(iii) Evaluate the series to the desired order.
+
+4. Advantages
+	- Accurate near x_n for equally spaced data.
+	- Same computational effort as the forward form.
+
+5. Disadvantages / Limitations
+	- Requires equal spacing.
+	- Accuracy drops away from the end node.
+
+6. Applications
+	- End-region interpolation in engineering tables.
+
+7. Implementation Insight (MATLAB / R)
+	Similar to the forward method but anchored at the bottom of the difference table.
+
+8. Example
+	Interpolate near the last node of an equally spaced table for best accuracy.
+
+9. Comparison (Interpolation Methods)
+
+| Method | Node spacing | Core formula | Accuracy region | Cost | Pros | Cons | Use |
+| ------ | ------------ | ------------ | --------------- | ---- | ---- | ---- | --- |
+| Newton Forward | Equal spacing | Forward differences | Near start | Build table once, evaluation cheap | Reusable series, efficient | Needs equal spacing | Start-side table data |
+| Newton Backward | Equal spacing | Backward differences | Near end | Similar | Good near end | Needs equal spacing | End-side table data |
+| Lagrange | Any spacing | Basis polynomials | Global | O(n^2) per evaluation | Handles unequal spacing | Recompute when adding nodes | Irregular nodes, small n |
+
+When to prefer which?
+- Equally spaced data near the start: choose Newton Forward.
+- Equally spaced data near the end: choose Newton Backward.
+- Unequally spaced or few points: choose Lagrange.

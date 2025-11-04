@@ -1,0 +1,44 @@
+# Trapezoidal Rule
+
+1. Definition / Concept Overview
+	Approximates the area under a curve by summing trapezoids over subintervals.
+
+2. Mathematical Formulae
+	Composite rule on [a, b] with step h = (b - a) / n:
+	Integral ≈ h / 2 * [f(x0) + 2 * sum_{k = 1}^{n - 1} f(xk) + f(xn)].
+	Error: E_T = -(b - a) * h^2 * f''(xi) / 12 for some xi in (a, b).
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Choose n and compute the grid points.
+	(ii) Sum the endpoints and twice the interior values.
+	(iii) Multiply by h / 2.
+
+4. Advantages
+	- Simple and works for any reasonably smooth function.
+	- Useful for mildly curved functions and can be adapted.
+
+5. Disadvantages / Limitations
+	- Second order; needs many panels for high accuracy.
+
+6. Applications
+	- Rough integrals, noisy data, baseline estimate in adaptive schemes.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB provides trapz(x, y) or manual implementation.
+	In R use pracma::trapz or implement the sum directly.
+
+8. Example
+	Approximate the integral from 0 to 1 of exp(-x^2) with n = 100.
+
+9. Comparison (Quadrature Methods)
+
+| Method | Approach | Order | Grid restriction | Pros | Cons | Use |
+| ------ | -------- | ----- | ---------------- | ---- | ---- | --- |
+| Trapezoidal | Linear segments | 2 | None | Simple, robust, works with noisy data | Low order | Quick rough integrals |
+| Simpson 1/3 | Quadratic pieces | 4 | n even | High accuracy for smooth functions | Needs even n, not ideal for highly oscillatory data | Default for smooth functions |
+| Simpson 3/8 | Cubic pieces | 4 | n multiple of 3 | Same order as 1/3, flexible when n divisible by 3 | Weight bookkeeping | When n is a multiple of 3 or mixing panels |
+
+When to prefer which?
+- Smooth integrands: Simpson 1/3 is the default.
+- n multiple of 3: Simpson 3/8 (alone or combined with 1/3).
+- Noisy or rough data, or a quick estimate: Trapezoidal.

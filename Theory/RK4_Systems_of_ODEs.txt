@@ -1,0 +1,41 @@
+# RK4 for Systems of First Order ODEs
+
+1. Definition / Concept Overview
+	Extends classical RK4 to vector-valued problems y' = f(t, y) in R^m by applying the four-stage update to each component simultaneously.
+
+2. Mathematical Formulae
+	Same RK4 formulas as the scalar case, but k1 through k4 are vectors in R^m.
+
+3. Algorithm / Step-by-Step Procedure
+	Evaluate vector k1 to k4 using the system function and update the vector state with their weighted average.
+
+4. Advantages
+	- Straightforward extension of RK4; naturally handles coupled equations.
+
+5. Disadvantages / Limitations
+	- Requires four vector function evaluations per step and remains explicit (non-stiff only).
+
+6. Applications
+	- Coupled mechanics, predator-prey models, RLC circuits, and other non-stiff systems.
+
+7. Implementation Insight (MATLAB / R)
+	Use vector operations; the scalar RK4 routine works provided f returns column vectors and y is stored appropriately.
+
+8. Example
+	Integrate the Lotka-Volterra predator-prey system with RK4.
+
+9. Comparison (ODE Methods)
+
+| Method | Order | Function evals per step | Stability | Pros | Cons | Typical use |
+| ------ | ----- | ----------------------- | --------- | ---- | ---- | ----------- |
+| Euler | 1 | 1 | Poor (explicit) | Simplest | Low accuracy, unstable for stiff problems | Teaching, rough preview |
+| Modified Euler (Heun) | 2 | 2 | Better than Euler | Easy, decent accuracy | Still explicit | Non-stiff with light compute |
+| RK2 (Midpoint) | 2 | 2 | Better than Euler | Good second-order accuracy | Less accurate than RK4 | Real-time or quick sims |
+| RK4 | 4 | 4 | Good for non-stiff | High accuracy vs cost | Not for stiff problems | Default non-stiff solver |
+| RK4 (systems) | 4 | 4 vector evals | Same as RK4 | Works for vector ODEs | Costly for large systems | Coupled non-stiff models |
+
+When to prefer which?
+- Highest accuracy with reasonable steps on non-stiff problems: choose RK4 (or its system form).
+- Moderate accuracy at lower cost: choose RK2 or Heun.
+- Educational use or very small h: Euler.
+- Stiff problems: use implicit methods (not covered here).

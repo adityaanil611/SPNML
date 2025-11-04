@@ -1,0 +1,45 @@
+# Modified Euler Method (Heun)
+
+1. Definition / Concept Overview
+	Predictor-corrector explicit trapezoid method that averages slopes at the start and an Euler-predicted end point.
+
+2. Mathematical Formulae
+	Predictor: y_tilde = y_n + h * f(t_n, y_n).
+	Corrector: y_{n+1} = y_n + h / 2 * [f(t_n, y_n) + f(t_{n+1}, y_tilde)].
+	Global error is O(h^2).
+
+3. Algorithm / Step-by-Step Procedure
+	(i) Perform an Euler prediction.
+	(ii) Correct using the average of the start and predicted end slopes.
+	(iii) Repeat for each step.
+
+4. Advantages
+	- Better accuracy than Euler while remaining simple.
+
+5. Disadvantages / Limitations
+	- Requires an extra function evaluation per step compared to Euler.
+
+6. Applications
+	- Non-stiff initial value problems where second-order accuracy is sufficient.
+
+7. Implementation Insight (MATLAB / R)
+	Similar structure to Euler but include the corrector step.
+
+8. Example
+	For y' = -2 y the method delivers much higher accuracy than Euler for the same step size.
+
+9. Comparison (ODE Methods)
+
+| Method | Order | Function evals per step | Stability | Pros | Cons | Typical use |
+| ------ | ----- | ----------------------- | --------- | ---- | ---- | ----------- |
+| Euler | 1 | 1 | Poor (explicit) | Simplest | Low accuracy, unstable for stiff problems | Teaching, rough preview |
+| Modified Euler (Heun) | 2 | 2 | Better than Euler | Easy, decent accuracy | Still explicit | Non-stiff with light compute |
+| RK2 (Midpoint) | 2 | 2 | Better than Euler | Good second-order accuracy | Less accurate than RK4 | Real-time or quick sims |
+| RK4 | 4 | 4 | Good for non-stiff | High accuracy vs cost | Not for stiff problems | Default non-stiff solver |
+| RK4 (systems) | 4 | 4 vector evals | Same as RK4 | Works for vector ODEs | Costly for large systems | Coupled non-stiff models |
+
+When to prefer which?
+- Highest accuracy with reasonable steps on non-stiff problems: choose RK4.
+- Moderate accuracy at lower cost: choose RK2 or Heun.
+- Educational use or very small h: Euler.
+- Stiff problems: use implicit methods (not covered here).

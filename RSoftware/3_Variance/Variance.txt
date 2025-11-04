@@ -1,0 +1,6 @@
+# 3) Variance
+
+```r
+x <- c(10, 12, 13, 15, 20)
+var(x)   # sample variance
+```

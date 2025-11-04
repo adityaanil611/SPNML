@@ -1,0 +1,60 @@
+# Fourth Order Runge Kutta (RK4)
+
+1. Definition / Concept Overview
+	Classical four-stage explicit Runge Kutta method; the standard choice for non-stiff initial value problems.
+
+2. Mathematical Formulae
+	k1 = f(t_n, y_n)
+	k2 = f(t_n + h / 2, y_n + h / 2 * k1)
+	k3 = f(t_n + h / 2, y_n + h / 2 * k2)
+	k4 = f(t_n + h, y_n + h * k3)
+	y_{n+1} = y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+	Global error is O(h^4).
+
+3. Algorithm / Step-by-Step Procedure
+	Evaluate k1 through k4, compute their weighted average, and update y_{n+1}.
+
+4. Advantages
+	- High accuracy and good stability for modest step sizes.
+
+5. Disadvantages / Limitations
+	- Requires four function evaluations per step.
+	- Still explicit, so not suitable for stiff problems.
+
+6. Applications
+	- Default solver for smooth, non-stiff ordinary differential equations.
+
+7. Implementation Insight (MATLAB / R)
+	MATLAB
+	function [t, y] = rk4(f, t0, y0, h, N)
+	t = (t0:h:t0 + N * h)'; y = zeros(N + 1, length(y0)); y(1,:) = y0;
+	for n = 1:N
+		 k1 = f(t(n), y(n,:))';
+		 k2 = f(t(n) + h / 2, y(n,:) + h / 2 * k1)';
+		 k3 = f(t(n) + h / 2, y(n,:) + h / 2 * k2)';
+		 k4 = f(t(n) + h, y(n,:) + h * k3)';
+		 y(n + 1,:) = y(n,:) + h * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+	end
+	end
+
+	R
+	Similar vectorised implementation evaluating four stages per step.
+
+8. Example
+	For y' = -2 y and h = 0.1, RK4 yields y(1) very close to the exact value e^-2.
+
+9. Comparison (ODE Methods)
+
+| Method | Order | Function evals per step | Stability | Pros | Cons | Typical use |
+| ------ | ----- | ----------------------- | --------- | ---- | ---- | ----------- |
+| Euler | 1 | 1 | Poor (explicit) | Simplest | Low accuracy, unstable for stiff problems | Teaching, rough preview |
+| Modified Euler (Heun) | 2 | 2 | Better than Euler | Easy, decent accuracy | Still explicit | Non-stiff with light compute |
+| RK2 (Midpoint) | 2 | 2 | Better than Euler | Good second-order accuracy | Less accurate than RK4 | Real-time or quick sims |
+| RK4 | 4 | 4 | Good for non-stiff | High accuracy vs cost | Not for stiff problems | Default non-stiff solver |
+| RK4 (systems) | 4 | 4 vector evals | Same as RK4 | Works for vector ODEs | Costly for large systems | Coupled non-stiff models |
+
+When to prefer which?
+- Highest accuracy with reasonable steps on non-stiff problems: choose RK4.
+- Moderate accuracy at lower cost: choose RK2 or Heun.
+- Educational use or very small h: Euler.
+- Stiff problems: use implicit methods (not covered here).

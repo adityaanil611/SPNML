@@ -1,0 +1,22 @@
+# 1) Construct a matrix, barplot, mean, median, mode
+
+```r
+# Matrix
+m <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, ncol = 3, byrow = TRUE)
+m
+
+# Barplot
+values <- c(4, 7, 1, 5)
+names(values) <- c("A", "B", "C", "D")
+barplot(values, main = "Simple Barplot")
+
+# Mean, Median, Mode (statistical mode)
+x <- c(2, 3, 3, 5, 7, 7, 7, 9)
+mean(x)
+median(x)
+mode_stat <- function(v) {
+  t <- table(v)
+  as.numeric(names(t)[which.max(t)])
+}
+mode_stat(x)
+```
